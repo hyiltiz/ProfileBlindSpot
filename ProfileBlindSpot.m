@@ -17,17 +17,26 @@ cursorHz = 5;
 displayWidthMm = 382.5;
 
 AssertOpenGL;
-Screen('Preference','VisualDebugLevel', 0);
-Screen('Preference', 'SuppressAllWarnings', 1);
+justRunQuietly = true;
+if justRunQuietly
+  Screen('Preference', 'SkipSyncTests', 1);
+  Screen('Preference', 'VisualDebugLevel', 0);
+  Screen('Preference', 'SuppressAllWarnings', 1);
+else
+  % this runs with all the quality guarantees and logs enabled
+  Screen('Preference', 'SkipSyncTests', 0);
+  Screen('Preference', 'VisualDebugLevel', 2);
+  Screen('Preference', 'SuppressAllWarnings', 0);
+end
 KbName('UnifyKeyNames');
 ListenChar(2);
 
 
 qKey = KbName('q');
 
-if ~IsLinux
-  error('Sorry, this demo currently only works on Linux.');
-end
+% if ~IsLinux
+%   error('Sorry, this demo currently only works on Linux.');
+% end
 
 try
   % Open up a window on the screen and clear it.
@@ -36,13 +45,21 @@ try
   % Enable alpha blending with proper blend-function. We need it
   % for drawing of smoothed points:
   Screen('BlendFunction', theWindow, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  cx=theRect(RectRight)/2;
-  cy=theRect(RectBottom)/2;
-
+  
   % Use an offscreen window as drawing canvas:
   wOff = Screen('OpenOffscreenWindow', theWindow, 0);
-
+  
+  % Specify the font so regardless of system defaults, we always use the
+  % same font
+  Screen('TextFont',theWindow, 'Helvetica');
+  Screen('TextSize',theWindow, 16);
+  Screen('TextFont',wOff, 'Helvetica');
+  Screen('TextSize',wOff, 16);
+  % fprintf('The font is %s\n', Screen('TextFont',theWindow));
+    
+  cx=theRect(RectRight)/2;
+  cy=theRect(RectBottom)/2;
+  
   [width, height]=Screen('DisplaySize', whichScreen);
   resolution = Screen('resolution', whichScreen);
   mmPerPix =  width / resolution.width;
@@ -79,7 +96,6 @@ try
 
   % Some instructions, drawn into the drawing canvas:
   Screen(wOff,'FillRect',0);  % dark background
-  Screen(wOff,'TextSize',24);
   DrawFormattedText(wOff,sprintf('Throughout the experiment: rest your chin no further than %.1f cm in front of the red point firmly, cover one eye, and maintain fixation.\nDrag a mouse until the cursor just disappears then click to mark the point within your blind spot. Repeat to trace a blind spot region.\nClick right mouse anywhere to erase your last mark if you made a mistake. When done, cover the other eye and repeat. Press q key to save and exit.', viewDistcm), 20, 20, 255);
   % Fixation is at the center of the screen
   Screen('DrawDots', wOff, [cx cy], 5, 255*[1 0 0], [], 2);
@@ -94,7 +110,7 @@ try
     [isKeyPressed,keyTime,keyCode] = KbCheck(-3);
     if any(keyCode(qKey))
         break
-    end;
+    end
 
     % Blit offscreen window with users scribbling into onscreen window:
     Screen('DrawTexture', theWindow, wOff);
@@ -146,7 +162,7 @@ try
 
   % the data
   imgWOff = Screen('GetImage', wOff);
-  datafile = ['ProfileBlindSpot-' datestr(now, 'YYYYmmDDHHmmSS')];
+  datafile = ['ProfileBlindSpot-' datestr(now, 'yyyymmddHHMMSS')];
   imwrite(imgWOff,  [datafile '.png']);
   fprintf('Saved the data at %s/%s\n', pwd, datafile);
 
@@ -155,8 +171,8 @@ try
   data.img = imgWOff;
   data.XY = XY; 
   data.viewingDistanceMm = viewingDistanceMm;
-  dat.mmPerPix = displayWidthMm / dat.resolution.width;
   data.resolution = resolution;
+  data.mmPerPix = displayWidthMm / data.resolution.width;
   save([datafile '.mat']', '-v7', '-struct', 'data');
 
   % Show master cursors again:
@@ -199,10 +215,10 @@ function analyzeBlindSpot(dat)
 
 %% load data
 
-dat = load('ProfileBlindSpot-20210925170929-QC.mat');
+% dat = load('sample.mat');
 
-displayWidthMm = 382.5;  % manually measured
-dat.mmPerPix = displayWidthMm / dat.resolution.width;
+% displayWidthMm = 382.5;  % manually measured
+% dat.mmPerPix = displayWidthMm / dat.resolution.width;
 
 % plot raw data
 figure
@@ -211,7 +227,9 @@ imshow(dat.img);
 %% re-center w.r.t. the fixation, which was at the center of the screen
 X = dat.XY(:,1) - dat.resolution.width/2;       % positive goes right
 Y = -(dat.XY(:,2) - dat.resolution.height/2);   % positive goes up
-d = str2double(dat.viewingDistanceCm) * 10 / dat.mmPerPix; % work in pix
+
+% only consider the right eye for now
+d = str2double(dat.viewingDistanceMm(1)) / dat.mmPerPix; % work in pix
 
 %% Plot the eyeball
 
@@ -343,36 +361,6 @@ title('Blind spot');
 subtitle('Visual field of the right eye')
 % ylabel('Vertical (deg)');
 
-
-%{
-plotsize = min([diff(xlim) diff(ylim)]);
-xticklength = 0.015*plotsize;
-yticklength = 0.01*plotsize;
-% xticks
-xpos1 = get(gca, 'XTick');
-xpos = reshape([xpos1; xpos1; nan(1,numel(xpos1))], 1, [])';
-ylims = ylim; 
-ypos = ylims(1) + [0 xticklength];
-ypos = repmat([ypos nan(1,1)], [1 numel(xpos1)]);
-if strcmp(get(gca, 'Box'), 'on')
-  % add ticks on top of plot
-  xpos = [xpos xpos];
-  ypos = [ypos ypos + diff(ylims) - xticklength];
-end
-line(xpos(1:end-1), ypos(1:end-1), 'Color', get(gca, 'XColor'))
-% yticks
-ypos1 = get(gca, 'YTick');
-ypos = reshape([ypos1; ypos1; nan(1,numel(ypos1))], 1, [])';
-xlims = xlim; 
-xpos = xlims(1) + [0 yticklength];
-xpos = repmat([xpos nan(1,1)], [1 numel(ypos1)]);
-if strcmp(get(gca, 'Box'), 'on')
-  % add ticks on top of plot
-  ypos = [ypos ypos];
-  xpos = [xpos xpos + diff(xlims) - yticklength];
-end
-line(xpos(1:end-1), ypos(1:end-1), 'Color', get(gca, 'YColor'))
-%}
 end
 
 end
