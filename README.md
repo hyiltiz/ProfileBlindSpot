@@ -73,6 +73,8 @@ Run the program `ProfileBlindSpot.m` using `Octave` or `Matlab`. You'll need to
 dependency. Follow the game
 instructions. Once finished, the sub-function `analyzeBlindSpot` automatically
 traces the blind spot boundary and its retinal map on a spherical eye model.
+During the game, your mouse cursor turns into a highly visible and colorful
+dot, using which you can then probe your own blind spot interactively.
 
 The game looks like this.
 ![Game screen](https://raw.githubusercontent.com/hyiltiz/ProfileBlindSpot/main/raw.png)
