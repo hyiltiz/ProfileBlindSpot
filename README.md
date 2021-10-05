@@ -51,6 +51,15 @@ closer to the nose. As a result, your right eye is blind slightly to your
 right, regardless of what you are looking at. If you stretch your hands forward
 next to each other with your palms facing down and look at your left pinky, the
 blind spot of your right eye roughly corresponds to your right pinky direction.
+See the model below as illustrated from behind the retina of the right eye.
+
+!(Blind spot on the retina)[./BlindSpotEyeball.gif]
+
+As a result of the missing sensors in this region, you'll be blind within
+corresponding region *in the world* (called the visual field), as illustrated
+below for the right eye:
+
+!(Blind spot in the world)[./BlindSpot.png]
 
 With this game, you can actually trace the out how *your very own* optic nerves
 block your vision. Your blind spots were always there; it is just our
