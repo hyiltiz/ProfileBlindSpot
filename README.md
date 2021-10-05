@@ -53,13 +53,13 @@ next to each other with your palms facing down and look at your left pinky, the
 blind spot of your right eye roughly corresponds to your right pinky direction.
 See the model below as illustrated from behind the retina of the right eye.
 
-!(Blind spot on the retina)[https://raw.githubusercontent.com/hyiltiz/ProfileBlindSpot/main/BlindSpotEyeball.gif]
+![Blind spot on the retina](https://raw.githubusercontent.com/hyiltiz/ProfileBlindSpot/main/BlindSpotEyeball.gif)
 
 As a result of the missing sensors in this region, you'll be blind within
 corresponding region *in the world* (called the visual field), as illustrated
 below for the right eye:
 
-!(Blind spot in the world)[https://raw.githubusercontent.com/hyiltiz/ProfileBlindSpot/main/BlindSpotVisualField.png]
+![Blind spot in the world](https://raw.githubusercontent.com/hyiltiz/ProfileBlindSpot/main/BlindSpotVisualField.png)
 
 With this game, you can actually trace the out how *your very own* optic nerves
 block your vision. Your blind spots were always there; it is just our
@@ -75,7 +75,7 @@ instructions. Once finished, the sub-function `analyzeBlindSpot` automatically
 traces the blind spot boundary and its retinal map on a spherical eye model.
 
 The game looks like this.
-!(Game screen)[https://raw.githubusercontent.com/hyiltiz/ProfileBlindSpot/main/raw.png]
+![Game screen](https://raw.githubusercontent.com/hyiltiz/ProfileBlindSpot/main/raw.png)
 
 Note that the boundaries are created with the `boundary(x,y)` function that
 traces the boundary polygon given the point coordinate vectors. This function
