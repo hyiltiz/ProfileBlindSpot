@@ -59,7 +59,7 @@ As a result of the missing sensors in this region, you'll be blind within
 corresponding region *in the world* (called the visual field), as illustrated
 below for the right eye:
 
-!(Blind spot in the world)[./BlindSpot.png]
+!(Blind spot in the world)[./BlindSpotVisualField.png]
 
 With this game, you can actually trace the out how *your very own* optic nerves
 block your vision. Your blind spots were always there; it is just our
